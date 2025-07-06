@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEE Warrior Focus Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --dark: #121826;
+            --darker: #0d1117;
+            --light: #f8f9fa;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --focus-bg: #0f172a;
+            --light-bg: #f1f5f9;
+            --light-card: #ffffff;
+            --light-text: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--darker), #1a202c);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        body.light-theme {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            color: var(--light-text);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        body.light-theme header {
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+        }
+        
+        body.light-theme h1 {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+        }
+        
+        .date-display {
+            background: rgba(67, 97, 238, 0.15);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        body.light-theme .date-display {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--light-text);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        body.light-theme .section-card {
+            background: var(--light-card);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .section-card h2 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        body.light-theme .section-card h2 {
+            color: var(--secondary);
+        }
+        
+        .section-card h2 i {
+            color: var(--primary);
+        }
+        
+        /* Task Checklist */
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        body.light-theme .check-item {
+            background: rgba(30, 41, 59, 0.05);
+        }
+        
+        .check-item:hover {
+            background: rgba(67, 97, 238, 0.2);
+        }
+        
+        .check-item input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            margin-right: 15px;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+        
+        .check-item label {
+            font-size: 1.1rem;
+            cursor: pointer;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .check-item .tick-icon {
+            margin-left: auto;
+            color: var(--success);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .check-item input:checked ~ .tick-icon {
+            opacity: 1;
+        }
+        
+        /* Today's Target */
+        .target-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        
+        body.light-theme .target-input {
+            background: white;
+            color: var(--light-text);
+            border: 1px solid #cbd5e1;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Lecture Tracker */
+        .lecture-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .lecture-table th {
+            background: rgba(67, 97, 238, 0.2);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        body.light-theme .lecture-table th {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .lecture-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        body.light-theme .lecture-table tr:nth-child(even) {
+            background: rgba(30, 41, 59, 0.03);
+        }
+        
+        .lecture-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        body.light-theme .lecture-table td {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        /* Backlog Manager */
+        .backlog-list {
+            margin-top: 15px;
+        }
+        
+        .backlog-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        body.light-theme .backlog-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .backlog-item input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--light);
+            padding: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body.light-theme .backlog-item input[type="text"] {
+            color: var(--light-text);
+        }
+        
+        .backlog-item input[type="text"]:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .backlog-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .backlog-stats {
+            margin-left: auto;
+            font-weight: 500;
+            color: var(--accent);
+        }
+        
+        body.light-theme .backlog-stats {
+            color: var(--secondary);
+        }
+        
+        /* Motivational Quotes */
+        .quote-container {
+            background: rgba(67, 97, 238, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-top: 15px;
+            transition: opacity 0.5s ease;
+        }
+        
+        body.light-theme .quote-container {
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .quote-text {
+            font-size: 1.4rem;
+            font-style: italic;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .quote-author {
+            text-align: right;
+            font-weight: 500;
+            color: var(--accent);
+        }
+        
+        /* Weekly Calendar */
+        .week-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .day-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        body.light-theme .day-card {
+            background: rgba(30, 41, 59, 0.05);
+        }
+        
+        .day-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+        
+        .dots-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .dot.checked {
+            background: var(--success);
+        }
+        
+        /* Sunday Test Zone */
+        .test-form {
+            margin-top: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body.light-theme .form-control {
+            background: white;
+            color: var(--light-text);
+            border: 1px solid #cbd5e1;
+        }
+        
+        /* Pomodoro Timer */
+        .timer-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            margin: 20px 0;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+        }
+        
+        .timer-state {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+        
+        .timer-state.break {
+            color: var(--warning);
+        }
+        
+        .timer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+        
+        body.light-theme .theme-toggle {
+            background: var(--light-card);
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* Focus Mode */
+        .focus-mode-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 90px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            border: none;
+            font-weight: 500;
+        }
+        
+        /* Sticky Notes */
+        .notes-container {
+            margin-top: 15px;
+        }
+        
+        .notes-box {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        
+        body.light-theme .notes-box {
+            background: white;
+            color: var(--light-text);
+            border: 1px solid #cbd5e1;
+        }
+        
+        /* Progress Bar */
+        .progress-section {
+            margin-top: 25px;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        body.light-theme .progress-bar {
+            background: rgba(30, 41, 59, 0.1);
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        /* Completion Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .popup-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+        }
+        
+        .popup-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--success);
+        }
+        
+        .popup-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 2px;
+            animation: confetti-fall 5s ease-in-out forwards;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Reset Button */
+        .reset-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            border: none;
+        }
+        
+        /* Focus Mode */
+        .focus-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--focus-bg);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .focus-mode.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .focus-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .focus-header h2 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        
+        .focus-timer {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(76, 201, 240, 0.7);
+            margin-bottom: 40px;
+        }
+        
+        .focus-target {
+            font-size: 1.8rem;
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+        
+        .exit-focus {
+            background: var(--danger);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Avatar */
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--accent);
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-placeholder {
+            font-size: 3rem;
+            color: var(--accent);
+        }
+        
+        .avatar-btn {
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        /* Section Divider */
+        .section-title {
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        body.light-theme .section-title {
+            border-bottom: 2px solid var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>JEE WARRIOR FOCUS DASHBOARD</h1>
+            <div class="date-display">
+                <i class="fas fa-calendar"></i>
+                <span id="current-date">Sunday, 06 July 2025</span>
+            </div>
+        </header>
+        
+        <div class="section-title">
+            <i class="fas fa-tasks"></i>
+            <span>Daily Tracking</span>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Daily Task Checklist -->
+            <div class="section-card">
+                <h2><i class="fas fa-check-circle"></i> Daily Task Checklist</h2>
+                <div class="checklist">
+                    <div class="check-item">
+                        <input type="checkbox" id="lecture-watched">
+                        <label for="lecture-watched"><i class="fas fa-video"></i> Lecture Watched</label>
+                        <i class="fas fa-check tick-icon"></i>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="dpp-solved">
+                        <label for="dpp-solved"><i class="fas fa-file-alt"></i> DPP Solved</label>
+                        <i class="fas fa-check tick-icon"></i>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="revision-done">
+                        <label for="revision-done"><i class="fas fa-book"></i> Revision Done</label>
+                        <i class="fas fa-check tick-icon"></i>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="slept-on-time">
+                        <label for="slept-on-time"><i class="fas fa-bed"></i> Slept on Time</label>
+                        <i class="fas fa-check tick-icon"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Today's Target -->
+            <div class="section-card">
+                <h2><i class="fas fa-bullseye"></i> Today's Target</h2>
+                <textarea class="target-input" id="today-target" placeholder="Enter your targets for today...">Physics: Electrostatics problems (30 MCQs)
+Chemistry: Chemical Kinetics revision
+Maths: Integration practice (chapter 7)</textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="save-target">Save</button>
+                    <button class="btn btn-outline" id="clear-target">Clear</button>
+                </div>
+            </div>
+            
+            <!-- Lecture Tracker -->
+            <div class="section-card">
+                <h2><i class="fas fa-book"></i> Lecture Progress Tracker</h2>
+                <table class="lecture-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Chapter Name</th>
+                            <th>Done</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Physics</td>
+                            <td>Electrostatics</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td>Chemistry</td>
+                            <td>Chemical Kinetics</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td>Maths</td>
+                            <td>Integration</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td>Physics</td>
+                            <td>Optics</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="btn-group" style="margin-top: 15px;">
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Topic</button>
+                </div>
+            </div>
+            
+            <!-- Backlog Manager -->
+            <div class="section-card">
+                <h2><i class="fas fa-list"></i> Backlog Checklist</h2>
+                <div class="backlog-list">
+                    <div class="backlog-item">
+                        <input type="checkbox" id="backlog1">
+                        <input type="text" value="Complete Kinematics DPP">
+                    </div>
+                    <div class="backlog-item">
+                        <input type="checkbox" id="backlog2">
+                        <input type="text" value="Revise Organic Chemistry reactions">
+                    </div>
+                    <div class="backlog-item">
+                        <input type="checkbox" id="backlog3">
+                        <input type="text" value="Solve quadratic equations practice sheet">
+                    </div>
+                </div>
+                <div class="backlog-controls">
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Task</button>
+                    <div class="backlog-stats">2/5 completed</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title">
+            <i class="fas fa-brain"></i>
+            <span>Focus Tools</span>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Motivational Quotes -->
+            <div class="section-card">
+                <h2><i class="fas fa-quote-left"></i> Quote of the Day</h2>
+                <div class="quote-container" id="quote-box">
+                    <p class="quote-text">The difference between ordinary and extraordinary is that little extra.</p>
+                    <p class="quote-author">- Jimmy Johnson</p>
+                </div>
+            </div>
+            
+            <!-- Pomodoro Timer -->
+            <div class="section-card">
+                <h2><i class="fas fa-clock"></i> Focus Timer (Pomodoro)</h2>
+                <div class="timer-container">
+                    <div class="timer-state" id="timer-state">Study Time</div>
+                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="timer-buttons">
+                        <button class="btn btn-primary" id="timer-start"><i class="fas fa-play"></i> Start</button>
+                        <button class="btn btn-outline" id="timer-pause"><i class="fas fa-pause"></i> Pause</button>
+                        <button class="btn btn-outline" id="timer-reset"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weekly Calendar -->
+            <div class="section-card">
+                <h2><i class="fas fa-calendar-alt"></i> Weekly Progress</h2>
+                <div class="week-calendar">
+                    <div class="day-card">
+                        <div class="day-name">Sun</div>
+                        <div class="dots-container">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot checked"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-name">Mon</div>
+                        <div class="dots-container">
+                            <div class="dot checked"></div>
+                            <div class="dot checked"></div>
+                            <div class="dot checked"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-name">Tue</div>
+                        <div class="dots-container">
+                            <div class="dot checked"></div>
+                            <div class="dot checked"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-name">Wed</div>
+                        <div class="dots-container">
+                            <div class="dot checked"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-name">Thu</div>
+                        <div class="dots-container">
+                            <div class="dot checked"></div>
+                            <div class="dot checked"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-name">Fri</div>
+                        <div class="dots-container">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="day-name">Sat</div>
+                        <div class="dots-container">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sticky Notes -->
+            <div class="section-card">
+                <h2><i class="fas fa-sticky-note"></i> Quick Notes</h2>
+                <div class="notes-container">
+                    <textarea class="notes-box" id="quick-notes" placeholder="Write your quick notes here...">Important formula: 
+∫eˣ dx = eˣ + C
+
+Physics: 
+F = k * (q1*q2)/r²
+
+Chemistry:
+Rate = k [A]^m [B]^n</textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title">
+            <i class="fas fa-chart-line"></i>
+            <span>Progress & Tools</span>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Progress Bar -->
+            <div class="section-card">
+                <h2><i class="fas fa-chart-bar"></i> Daily Progress</h2>
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress" id="daily-progress" style="width: 25%;"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span>Today's Progress</span>
+                        <span>25%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sunday Test Zone -->
+            <div class="section-card">
+                <h2><i class="fas fa-flask"></i> Sunday Test + Mistake Review</h2>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label for="test-subject">Subject</label>
+                        <select class="form-control" id="test-subject">
+                            <option>Physics</option>
+                            <option>Chemistry</option>
+                            <option>Maths</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="test-marks">Marks Obtained</label>
+                        <input type="number" class="form-control" id="test-marks" placeholder="Enter marks">
+                    </div>
+                    <div class="form-group">
+                        <label for="mistake-log">Mistake Log</label>
+                        <textarea class="form-control" id="mistake-log" rows="4" placeholder="Document your mistakes..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 10px;">Save Test Results</button>
+                </div>
+            </div>
+            
+            <!-- Profile Avatar -->
+            <div class="section-card">
+                <h2><i class="fas fa-user"></i> Your Avatar</h2>
+                <div class="avatar-container">
+                    <div class="avatar">
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                    </div>
+                    <button class="avatar-btn"><i class="fas fa-upload"></i> Upload Photo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Focus Mode -->
+    <div class="focus-mode" id="focus-mode">
+        <div class="focus-header">
+            <h2>FOCUS MODE</h2>
+            <p>No distractions, just your targets and timer</p>
+        </div>
+        <div class="focus-timer" id="focus-timer">25:00</div>
+        <div class="focus-target" id="focus-target">
+            Physics: Electrostatics problems (30 MCQs)<br>
+            Chemistry: Chemical Kinetics revision<br>
+            Maths: Integration practice (chapter 7)
+        </div>
+        <button class="exit-focus" id="exit-focus">
+            <i class="fas fa-times"></i> Exit Focus Mode
+        </button>
+    </div>
+    
+    <!-- Completion Popup -->
+    <div class="popup-overlay" id="completion-popup">
+        <div class="popup-content">
+            <h2>CONGRATULATIONS!</h2>
+            <p>You've completed all your daily tasks! Keep up the great work!</p>
+            <button class="btn btn-primary" id="close-popup">Continue Studying</button>
+        </div>
+    </div>
+    
+    <!-- Focus Mode Button -->
+    <button class="focus-mode-btn" id="focus-mode-btn">
+        <i class="fas fa-lock"></i> Enter Focus Mode
+    </button>
+    
+    <!-- Reset Button -->
+    <button class="reset-btn" id="reset-btn">
+        <i class="fas fa-redo"></i>
+    </button>
+
+    <script>
+        // Set current date
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+        
+        // Theme toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('light-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Pomodoro Timer
+        let timerInterval;
+        let timerMinutes = 25;
+        let timerSeconds = 0;
+        let isRunning = false;
+        let isBreak = false;
+        
+        const timerDisplay = document.getElementById('timer-display');
+        const timerState = document.getElementById('timer-state');
+        const startBtn = document.getElementById('timer-start');
+        const pauseBtn = document.getElementById('timer-pause');
+        const resetBtn = document.getElementById('timer-reset');
+        
+        function updateTimerDisplay() {
+            timerDisplay.textContent = `${timerMinutes.toString().padStart(2, '0')}:${timerSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        function startTimer() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            timerInterval = setInterval(() => {
+                if (timerSeconds === 0) {
+                    if (timerMinutes === 0) {
+                        // Timer completed
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        
+                        if (isBreak) {
+                            // Break ended, start study
+                            isBreak = false;
+                            timerMinutes = 25;
+                            timerState.textContent = 'Study Time';
+                            timerState.classList.remove('break');
+                        } else {
+                            // Study ended, start break
+                            isBreak = true;
+                            timerMinutes = 5;
+                            timerState.textContent = 'Break Time';
+                            timerState.classList.add('break');
+                        }
+                        
+                        // Play sound
+                        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqMkJOWmp2goqSnqausrrCys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8=');
+                        audio.play();
+                        
+                        startTimer();
+                        return;
+                    }
+                    timerMinutes--;
+                    timerSeconds = 59;
+                } else {
+                    timerSeconds--;
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            isBreak = false;
+            timerMinutes = 25;
+            timerSeconds = 0;
+            timerState.textContent = 'Study Time';
+            timerState.classList.remove('break');
+            updateTimerDisplay();
+        }
+        
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        
+        updateTimerDisplay();
+        
+        // Focus Mode
+        const focusModeBtn = document.getElementById('focus-mode-btn');
+        const focusMode = document.getElementById('focus-mode');
+        const exitFocusBtn = document.getElementById('exit-focus');
+        const focusTimer = document.getElementById('focus-timer');
+        
+        focusModeBtn.addEventListener('click', () => {
+            focusMode.classList.add('active');
+        });
+        
+        exitFocusBtn.addEventListener('click', () => {
+            focusMode.classList.remove('active');
+        });
+        
+        // Update focus timer to match pomodoro timer
+        setInterval(() => {
+            focusTimer.textContent = `${timerMinutes.toString().padStart(2, '0')}:${timerSeconds.toString().padStart(2, '0')}`;
+        }, 1000);
+        
+        // Motivational Quotes
+        const quotes = [
+            "The difference between ordinary and extraordinary is that little extra.",
+            "Don't watch the clock; do what it does. Keep going.",
+            "The secret of getting ahead is getting started.",
+            "Your time is limited, don't waste it living someone else's life.",
+            "The harder you work for something, the greater you'll feel when you achieve it.",
+            "Dream big. Work hard. Stay focused.",
+            "Success is the sum of small efforts, repeated day in and day out.",
+            "The only way to do great work is to love what you do.",
+            "Believe you can and you're halfway there.",
+            "It always seems impossible until it's done."
+        ];
+        
+        const authors = [
+            "- Jimmy Johnson",
+            "- Sam Levenson",
+            "- Mark Twain",
+            "- Steve Jobs",
+            "- Unknown",
+            "- Unknown",
+            "- Robert Collier",
+            "- Steve Jobs",
+            "- Theodore Roosevelt",
+            "- Nelson Mandela"
+        ];
+        
+        const quoteBox = document.getElementById('quote-box');
+        let quoteIndex = 0;
+        
+        function changeQuote() {
+            quoteBox.style.opacity = 0;
+            
+            setTimeout(() => {
+                quoteIndex = (quoteIndex + 1) % quotes.length;
+                quoteBox.innerHTML = `<p class="quote-text">${quotes[quoteIndex]}</p><p class="quote-author">${authors[quoteIndex]}</p>`;
+                quoteBox.style.opacity = 1;
+            }, 500);
+        }
+        
+        setInterval(changeQuote, 10000);
+        
+        // Task completion tracking
+        const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+        const progressBar = document.getElementById('daily-progress');
+        const progressInfo = document.querySelector('.progress-info span:last-child');
+        const popup = document.getElementById('completion-popup');
+        const closePopup = document.getElementById('close-popup');
+        
+        function updateProgress() {
+            const completed = document.querySelectorAll('.checklist input[type="checkbox"]:checked').length;
+            const total = checkboxes.length;
+            const percentage = Math.round((completed / total) * 100);
+            
+            progressBar.style.width = `${percentage}%`;
+            progressInfo.textContent = `${percentage}%`;
+            
+            if (completed === total) {
+                popup.classList.add('active');
+                createConfetti();
+            }
+        }
+        
+        function createConfetti() {
+            const popupContent = document.querySelector('.popup-content');
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                popupContent.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateProgress);
+        });
+        
+        closePopup.addEventListener('click', () => {
+            popup.classList.remove('active');
+        });
+        
+        // Reset button
+        const resetBtn = document.getElementById('reset-btn');
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all data?')) {
+                // Clear checkboxes
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Reset progress
+                updateProgress();
+                
+                // Reset timer
+                resetTimer();
+                
+                // Clear target
+                document.getElementById('today-target').value = '';
+                
+                // Clear notes
+                document.getElementById('quick-notes').value = '';
+            }
+        });
+        
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
+</html>
